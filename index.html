@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fff8e7" />
+    <meta name="description" content="A cheerful block-building phonics game for early learners." />
+    <meta property="og:title" content="Block & Sound" />
+    <meta property="og:description" content="Build words. Hear sounds." />
+    <meta property="og:image" content="og.png" />
+    <title>Block & Sound — A Phonics Game</title>
+    <link rel="icon" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <span class="confetti confetti-one" aria-hidden="true"></span>
+      <span class="confetti confetti-two" aria-hidden="true"></span>
+      <span class="confetti confetti-three" aria-hidden="true"></span>
+
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-block" aria-hidden="true"><i></i><i></i><b>ABC</b></span>
+          <span>Block &amp; Sound</span>
+        </div>
+        <div class="crew-badge"><span aria-hidden="true">🚧</span> Phonics crew</div>
+        <div class="progress" id="progress" aria-label="0 of 3 stars earned"></div>
+      </header>
+
+      <section class="game-card" id="game-card">
+        <div class="picture-zone">
+          <span class="sun-shape" aria-hidden="true"></span>
+          <span class="cloud-shape" aria-hidden="true"></span>
+          <div class="picture-bubble" id="picture-bubble">
+            <span class="emoji-picture" id="emoji-picture" aria-hidden="true"></span>
+          </div>
+          <div class="toy-yard" aria-hidden="true">
+            <div class="brick-pile">
+              <span class="mini-brick mini-red"></span>
+              <span class="mini-brick mini-blue"></span>
+              <span class="mini-brick mini-green"></span>
+            </div>
+            <div class="road"><i></i><i></i><i></i></div>
+            <div class="toy-truck">
+              <div class="truck-bed"><span>C</span><span>A</span><span>T</span></div>
+              <div class="truck-cab"><i class="truck-window"></i><i class="truck-smile"></i></div>
+              <div class="truck-base"></div>
+              <i class="wheel wheel-one"></i><i class="wheel wheel-two"></i>
+            </div>
+          </div>
+          <div class="picture-label" id="picture-label"></div>
+        </div>
+
+        <div class="word-zone">
+          <p class="eyebrow" id="eyebrow"></p>
+          <h1 id="heading">Build the word!</h1>
+          <p class="instruction">Tap the letter blocks in the right order.</p>
+          <div class="sockets" id="sockets" aria-label="Word building spaces"></div>
+          <div class="blocks" id="blocks" aria-label="Letter blocks"></div>
+          <button class="sound-button" id="action-button" type="button">
+            <span class="speaker" aria-hidden="true">♪</span>
+            <span id="action-label">Hear the sounds</span>
+          </button>
+          <p class="hint" id="hint" aria-live="polite">Listen. Tap. Build!</p>
+        </div>
+      </section>
+      <footer>Grown-up tip: say each sound together, then blend them fast.</footer>
+    </main>
+  </body>
+</html>
