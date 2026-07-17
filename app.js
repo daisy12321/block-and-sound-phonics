@@ -14,6 +14,9 @@ const soundText = {
 };
 
 const elements = {
+  introScreen: document.querySelector("#intro-screen"),
+  startButton: document.querySelector("#start-button"),
+  gameShell: document.querySelector("#game-shell"),
   gameCard: document.querySelector("#game-card"),
   progress: document.querySelector("#progress"),
   pictureBubble: document.querySelector("#picture-bubble"),
@@ -151,5 +154,10 @@ elements.actionButton.addEventListener("click", () => {
   else hearSounds();
 });
 
+elements.startButton.addEventListener("click", () => {
+  elements.introScreen.classList.add("is-hidden");
+  elements.gameShell.classList.remove("is-hidden");
+  speak(`Find the sounds in ${rounds[roundIndex].label}`);
+});
+
 render();
-window.setTimeout(() => speak(`Find the sounds in ${rounds[roundIndex].label}`), 450);

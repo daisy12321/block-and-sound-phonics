@@ -14,7 +14,14 @@
     <script src="app.js" defer></script>
   </head>
   <body>
-    <main class="page-shell">
+    <section class="intro-shell" id="intro-screen" aria-label="Welcome to Block and Sound">
+      <div class="intro-card">
+        <img class="intro-image" src="og.png" alt="A smiling toy-brick dump truck carrying C, A, and T blocks" />
+        <button class="start-button" id="start-button" type="button">Start <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <main class="page-shell is-hidden" id="game-shell">
       <span class="confetti confetti-one" aria-hidden="true"></span>
       <span class="confetti confetti-two" aria-hidden="true"></span>
       <span class="confetti confetti-three" aria-hidden="true"></span>

@@ -236,3 +236,80 @@ footer { text-align: center; margin: 18px auto 0; color: #747170; font-size: 15p
   .sound-button, .next-button { min-height: 48px; }
   .hint { margin-top: 7px; }
 }
+
+.is-hidden { display: none !important; }
+
+.intro-shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(12px, 3vw, 32px);
+  background:
+    radial-gradient(circle at 8% 10%, #ffc93d45 0 150px, transparent 152px),
+    radial-gradient(circle at 92% 90%, #3387e830 0 190px, transparent 192px),
+    var(--cream);
+}
+
+.intro-card {
+  width: min(100%, 1100px);
+  display: grid;
+  justify-items: center;
+  gap: clamp(16px, 2.5vh, 28px);
+}
+
+.intro-image {
+  display: block;
+  width: 100%;
+  max-height: calc(100svh - 130px);
+  object-fit: contain;
+  border: 6px solid white;
+  border-radius: 30px;
+  box-shadow: 0 18px 50px #3f30182e;
+}
+
+.start-button {
+  min-width: 240px;
+  min-height: 70px;
+  position: relative;
+  border: 4px solid #ffffffb8;
+  border-radius: 18px;
+  padding: 0 34px;
+  color: white;
+  background: var(--green);
+  box-shadow: 0 8px 0 var(--green-dark), 0 14px 24px #25304a24;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 900;
+  transition: transform .18s ease;
+}
+
+.start-button::before,
+.start-button::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  width: 28px;
+  height: 10px;
+  border-radius: 8px 8px 0 0;
+  background: var(--green);
+  border: 3px solid #ffffff9c;
+  border-bottom: 0;
+}
+
+.start-button::before { left: 42px; }
+.start-button::after { right: 42px; }
+.start-button:hover { transform: translateY(-3px); }
+.start-button:active { transform: translateY(5px); box-shadow: 0 3px 0 var(--green-dark); }
+.start-button:focus-visible { outline: 5px solid var(--ink); outline-offset: 5px; }
+
+@media (max-width: 560px) {
+  .intro-shell { padding: 12px; }
+  .intro-card { gap: 18px; }
+  .intro-image { max-height: calc(100svh - 105px); border-width: 4px; border-radius: 18px; }
+  .start-button { min-width: 210px; min-height: 58px; border-radius: 14px; font-size: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-button { transition: none; }
+}
