@@ -239,6 +239,18 @@ footer { text-align: center; margin: 18px auto 0; color: #747170; font-size: 15p
 
 .is-hidden { display: none !important; }
 
+button.brand {
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+button.brand:hover { transform: translateY(-1px); }
+button.brand:focus-visible { outline: 4px solid var(--blue); outline-offset: 6px; border-radius: 12px; }
+
 .intro-shell {
   min-height: 100svh;
   display: grid;
