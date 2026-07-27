@@ -1,4 +1,9 @@
 const rounds = [
+  { word: "DIGGER", image: "digger.png", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
+  { word: "DUMP TRUCK", image: "dump-truck.png", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
+  { word: "DOZER", image: "dozer.png", label: "dozer", colors: ["yellow", "blue", "green", "red", "yellow"] },
+  { word: "TOWER CRANE", emoji: "🏗️", label: "tower crane", colors: ["green", "yellow", "blue", "red", "green", "yellow", "blue", "red", "green", "yellow"] },
+  { word: "MIXER", image: "mixer.png", label: "mixer", colors: ["blue", "red", "yellow", "green", "blue"] },
   { word: "CAT", emoji: "🐱", label: "cat", colors: ["blue", "yellow", "red"] },
   { word: "DOG", emoji: "🐶", label: "dog", colors: ["green", "red", "blue"] },
   { word: "VAN", emoji: "🚚", label: "van", colors: ["red", "yellow", "green"] },
@@ -6,11 +11,6 @@ const rounds = [
   { word: "PIG", emoji: "🐷", label: "pig", colors: ["red", "yellow", "blue"] },
   { word: "BUS", emoji: "🚌", label: "bus", colors: ["blue", "green", "red"] },
   { word: "HEN", emoji: "🐔", label: "hen", colors: ["green", "yellow", "red"] },
-  { word: "DIGGER", emoji: "🚜", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
-  { word: "DUMP TRUCK", emoji: "🚚", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
-  { word: "DOZER", emoji: "🚧", label: "dozer", colors: ["yellow", "blue", "green", "red", "yellow"] },
-  { word: "TOWER CRANE", emoji: "🏗️", label: "tower crane", colors: ["green", "yellow", "blue", "red", "green", "yellow", "blue", "red", "green", "yellow"] },
-  { word: "MIXER TRUCK", emoji: "🚛", label: "mixer truck", colors: ["blue", "red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
 ];
 
 const soundText = {
@@ -67,7 +67,19 @@ function render() {
   elements.gameCard.classList.toggle("is-celebrating", celebrating);
   elements.gameCard.classList.toggle("is-long-word", targetLetters.length > 3);
   elements.pictureBubble.setAttribute("aria-label", `A ${round.label}`);
-  elements.emoji.textContent = round.emoji;
+  elements.emoji.replaceChildren();
+  if (round.image) {
+    elements.emoji.className = "picture-visual";
+    const image = document.createElement("img");
+    image.className = "round-picture";
+    image.src = round.image;
+    image.alt = "";
+    image.setAttribute("aria-hidden", "true");
+    elements.emoji.append(image);
+  } else {
+    elements.emoji.className = "emoji-picture";
+    elements.emoji.textContent = round.emoji;
+  }
   elements.pictureLabel.textContent = round.label;
   elements.eyebrow.textContent = `Sound builder · ${roundIndex + 1} of ${rounds.length}`;
   elements.heading.textContent = celebrating ? "You built it!" : round.word.includes(" ") ? "Build the words!" : "Build the word!";

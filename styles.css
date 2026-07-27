@@ -405,3 +405,18 @@ button.brand:focus-visible { outline: 4px solid var(--blue); outline-offset: 6px
   .game-card.is-long-word .next-button { min-height: 46px; }
   .game-card.is-long-word .hint { margin-top: 6px; }
 }
+
+.picture-bubble { overflow: hidden; }
+.picture-visual {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+.round-picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
