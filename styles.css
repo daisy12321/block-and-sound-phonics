@@ -325,3 +325,83 @@ button.brand:focus-visible { outline: 4px solid var(--blue); outline-offset: 6px
 @media (prefers-reduced-motion: reduce) {
   .start-button { transition: none; }
 }
+
+.sockets { flex-wrap: wrap; align-items: center; }
+.socket-word { display: flex; gap: 17px; }
+
+.game-card.is-long-word .word-zone { padding-inline: 34px; }
+.game-card.is-long-word .sockets { gap: 18px; margin-bottom: 22px; }
+.game-card.is-long-word .socket-word { gap: 8px; }
+.game-card.is-long-word .socket {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  font-size: 30px;
+}
+.game-card.is-long-word .socket::before,
+.game-card.is-long-word .socket::after { top: -8px; width: 14px; height: 8px; }
+.game-card.is-long-word .socket::before { left: 12px; }
+.game-card.is-long-word .socket::after { right: 12px; }
+.game-card.is-long-word .socket span { font-size: 18px; }
+.game-card.is-long-word .blocks {
+  max-width: 760px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.game-card.is-long-word .letter-block {
+  width: 62px;
+  height: 62px;
+  border-width: 3px;
+  border-radius: 12px;
+  font-size: 29px;
+}
+.game-card.is-long-word .letter-block::before,
+.game-card.is-long-word .letter-block::after {
+  top: -12px;
+  width: 16px;
+  height: 9px;
+  border-width: 3px;
+}
+.game-card.is-long-word .letter-block::before { left: 8px; }
+.game-card.is-long-word .letter-block::after { right: 8px; }
+
+@media (max-width: 560px) {
+  .socket-word { gap: 7px; }
+  .picture-label { max-width: 150px; text-align: center; line-height: 1.05; }
+  .game-card.is-long-word .picture-zone { min-height: 86px; padding-block: 7px; }
+  .game-card.is-long-word .picture-bubble { width: 70px; flex-basis: 70px; }
+  .game-card.is-long-word .emoji-picture { font-size: 43px; }
+  .game-card.is-long-word .word-zone { padding: 9px 8px 12px; }
+  .game-card.is-long-word h1 { font-size: 26px; }
+  .game-card.is-long-word .instruction { margin: 2px 0 8px; font-size: 13px; }
+  .game-card.is-long-word .sockets { gap: 7px; margin-bottom: 11px; }
+  .game-card.is-long-word .socket-word { gap: 4px; }
+  .game-card.is-long-word .socket {
+    width: 39px;
+    height: 39px;
+    border-width: 2px;
+    border-radius: 9px;
+    font-size: 21px;
+  }
+  .game-card.is-long-word .socket::before,
+  .game-card.is-long-word .socket::after { display: none; }
+  .game-card.is-long-word .socket span { font-size: 13px; }
+  .game-card.is-long-word .blocks {
+    max-width: 255px;
+    gap: 6px;
+    margin-bottom: 11px;
+  }
+  .game-card.is-long-word .letter-block {
+    width: 43px;
+    height: 43px;
+    border-width: 2px;
+    border-radius: 9px;
+    font-size: 22px;
+  }
+  .game-card.is-long-word .letter-block::before,
+  .game-card.is-long-word .letter-block::after { display: none; }
+  .game-card.is-long-word .sound-button,
+  .game-card.is-long-word .next-button { min-height: 46px; }
+  .game-card.is-long-word .hint { margin-top: 6px; }
+}

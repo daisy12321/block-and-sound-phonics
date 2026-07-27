@@ -6,11 +6,17 @@ const rounds = [
   { word: "PIG", emoji: "🐷", label: "pig", colors: ["red", "yellow", "blue"] },
   { word: "BUS", emoji: "🚌", label: "bus", colors: ["blue", "green", "red"] },
   { word: "HEN", emoji: "🐔", label: "hen", colors: ["green", "yellow", "red"] },
+  { word: "DIGGER", emoji: "🚜", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
+  { word: "DUMP TRUCK", emoji: "🚚", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
+  { word: "DOZER", emoji: "🚧", label: "dozer", colors: ["yellow", "blue", "green", "red", "yellow"] },
+  { word: "TOWER CRANE", emoji: "🏗️", label: "tower crane", colors: ["green", "yellow", "blue", "red", "green", "yellow", "blue", "red", "green", "yellow"] },
+  { word: "MIXER TRUCK", emoji: "🚛", label: "mixer truck", colors: ["blue", "red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
 ];
 
 const soundText = {
   A: "ah", B: "buh", C: "kuh", D: "duh", E: "eh", G: "guh", H: "huh",
-  I: "ih", N: "nnn", O: "aw", P: "puh", S: "sss", T: "tuh", U: "uh", V: "vvv",
+  I: "ih", K: "kuh", M: "mmm", N: "nnn", O: "aw", P: "puh", R: "rrr",
+  S: "sss", T: "tuh", U: "uh", V: "vvv", W: "wuh", X: "ks",
 };
 
 const elements = {
@@ -49,18 +55,22 @@ function speak(text, rate = 0.72) {
 }
 
 function letterOrder(round) {
-  const values = [...round.word];
-  return roundIndex % 2 ? [values[2], values[0], values[1]] : values;
+  const values = round.word.replaceAll(" ", "").split("").map((letter, id) => ({ letter, id, color: round.colors[id] }));
+  const offset = (roundIndex * 2 + 1) % values.length;
+  const rotated = [...values.slice(offset), ...values.slice(0, offset)];
+  return roundIndex % 2 ? rotated.reverse() : rotated;
 }
 
 function render() {
   const round = rounds[roundIndex];
+  const targetLetters = round.word.replaceAll(" ", "").split("");
   elements.gameCard.classList.toggle("is-celebrating", celebrating);
+  elements.gameCard.classList.toggle("is-long-word", targetLetters.length > 3);
   elements.pictureBubble.setAttribute("aria-label", `A ${round.label}`);
   elements.emoji.textContent = round.emoji;
   elements.pictureLabel.textContent = round.label;
   elements.eyebrow.textContent = `Sound builder · ${roundIndex + 1} of ${rounds.length}`;
-  elements.heading.textContent = celebrating ? "You built it!" : "Build the word!";
+  elements.heading.textContent = celebrating ? "You built it!" : round.word.includes(" ") ? "Build the words!" : "Build the word!";
 
   elements.progress.replaceChildren();
   elements.progress.setAttribute("aria-label", `${stars} of 3 stars earned`);
@@ -73,30 +83,37 @@ function render() {
   }
 
   elements.sockets.replaceChildren();
-  [...round.word].forEach((letter, index) => {
-    const socket = document.createElement("div");
-    socket.className = placed[index] ? `socket filled ${round.colors[index]}` : "socket";
-    if (placed[index]) {
-      socket.textContent = letter;
-    } else {
-      const number = document.createElement("span");
-      number.textContent = String(index + 1);
-      socket.append(number);
-    }
-    elements.sockets.append(socket);
+  let groupOffset = 0;
+  round.word.split(" ").forEach((word) => {
+    const group = document.createElement("div");
+    group.className = "socket-word";
+    [...word].forEach((letter, wordIndex) => {
+      const index = groupOffset + wordIndex;
+      const socket = document.createElement("div");
+      socket.className = placed.length > index ? `socket filled ${round.colors[index]}` : "socket";
+      if (placed.length > index) {
+        socket.textContent = letter;
+      } else {
+        const number = document.createElement("span");
+        number.textContent = String(index + 1);
+        socket.append(number);
+      }
+      group.append(socket);
+    });
+    groupOffset += word.length;
+    elements.sockets.append(group);
   });
 
   elements.blocks.replaceChildren();
-  letterOrder(round).forEach((letter) => {
-    const sourceIndex = round.word.indexOf(letter);
+  letterOrder(round).forEach((tile) => {
     const button = document.createElement("button");
-    const used = placed.includes(letter);
+    const used = placed.includes(tile.id);
     button.type = "button";
-    button.className = `letter-block ${round.colors[sourceIndex]}${used ? " used" : ""}${mistake === letter ? " oops" : ""}`;
-    button.textContent = letter;
+    button.className = `letter-block ${tile.color}${used ? " used" : ""}${mistake === tile.id ? " oops" : ""}`;
+    button.textContent = tile.letter;
     button.disabled = used || celebrating;
-    button.setAttribute("aria-label", `Letter ${letter}`);
-    button.addEventListener("click", () => chooseLetter(letter));
+    button.setAttribute("aria-label", `Letter ${tile.letter}`);
+    button.addEventListener("click", () => chooseLetter(tile));
     elements.blocks.append(button);
   });
 
@@ -109,13 +126,14 @@ function render() {
       : "Listen. Tap. Build!";
 }
 
-function chooseLetter(letter) {
-  if (celebrating || placed.includes(letter) || placed.length === 3) return;
+function chooseLetter(tile) {
   const round = rounds[roundIndex];
-  const wanted = round.word[placed.length];
-  if (letter !== wanted) {
-    mistake = letter;
-    speak(`${soundText[letter] || letter}. Try another block.`);
+  const targetLetters = round.word.replaceAll(" ", "").split("");
+  if (celebrating || placed.includes(tile.id) || placed.length === targetLetters.length) return;
+  const wanted = targetLetters[placed.length];
+  if (tile.letter !== wanted) {
+    mistake = tile.id;
+    speak(`${soundText[tile.letter] || tile.letter}. Try another block.`);
     window.clearTimeout(mistakeTimer);
     mistakeTimer = window.setTimeout(() => {
       mistake = null;
@@ -125,9 +143,9 @@ function chooseLetter(letter) {
     return;
   }
 
-  placed.push(letter);
-  speak(soundText[letter] || letter);
-  if (placed.length === round.word.length) {
+  placed.push(tile.id);
+  speak(soundText[tile.letter] || tile.letter);
+  if (placed.length === targetLetters.length) {
     celebrating = true;
     stars = Math.min(3, stars + 1);
     window.setTimeout(() => speak(`${round.label}! You built it!`), 550);
@@ -137,7 +155,7 @@ function chooseLetter(letter) {
 
 function hearSounds() {
   const round = rounds[roundIndex];
-  const sounds = [...round.word].map((letter) => soundText[letter] || letter).join(" … ");
+  const sounds = round.word.replaceAll(" ", "").split("").map((letter) => soundText[letter] || letter).join(" … ");
   speak(`${sounds} … ${round.label}`, 0.62);
 }
 
