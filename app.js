@@ -49,11 +49,115 @@ let mistakeTimer;
 
 function speak(text, rate = 0.72) {
   if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
+  stopSound();
   const voice = new SpeechSynthesisUtterance(text);
   voice.rate = rate;
-  voice.pitch = 1.18;
+  voice.pitch = 1.08;
+  const voices = window.speechSynthesis.getVoices();
+  voice.voice =
+    voices.find((item) => item.lang.startsWith("en") && /Samantha|Ava|Aria|Google US English/i.test(item.name)) ||
+    voices.find((item) => item.lang.startsWith("en-US")) ||
+    voices.find((item) => item.lang.startsWith("en")) ||
+    null;
   window.speechSynthesis.speak(voice);
+}
+
+let soundRun = 0;
+let activeAudioContext = null;
+
+function stopSound() {
+  soundRun += 1;
+  window.speechSynthesis?.cancel();
+  activeAudioContext?.close();
+  activeAudioContext = null;
+}
+
+function playFricative(letter) {
+  if (!("AudioContext" in window)) {
+    speak(letter === "S" ? "s" : "v");
+    return;
+  }
+  const context = new AudioContext();
+  activeAudioContext = context;
+  const duration = 0.62;
+  const now = context.currentTime;
+  const master = context.createGain();
+  master.gain.setValueAtTime(0, now);
+  master.gain.linearRampToValueAtTime(letter === "S" ? 0.22 : 0.18, now + 0.04);
+  master.gain.setValueAtTime(letter === "S" ? 0.22 : 0.18, now + duration - 0.09);
+  master.gain.linearRampToValueAtTime(0, now + duration);
+  master.connect(context.destination);
+
+  const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate);
+  const samples = buffer.getChannelData(0);
+  for (let index = 0; index < samples.length; index += 1) {
+    samples[index] = Math.random() * 2 - 1;
+  }
+  const noise = context.createBufferSource();
+  noise.buffer = buffer;
+  const noiseFilter = context.createBiquadFilter();
+  noiseFilter.type = letter === "S" ? "highpass" : "bandpass";
+  noiseFilter.frequency.value = letter === "S" ? 3200 : 1700;
+  noiseFilter.Q.value = letter === "S" ? 0.7 : 0.9;
+  const noiseGain = context.createGain();
+  noiseGain.gain.value = letter === "S" ? 1 : 0.38;
+  noise.connect(noiseFilter).connect(noiseGain).connect(master);
+
+  if (letter === "V") {
+    const voice = context.createOscillator();
+    voice.type = "sawtooth";
+    voice.frequency.value = 145;
+    const voiceFilter = context.createBiquadFilter();
+    voiceFilter.type = "lowpass";
+    voiceFilter.frequency.value = 520;
+    const voiceGain = context.createGain();
+    voiceGain.gain.value = 0.42;
+    voice.connect(voiceFilter).connect(voiceGain).connect(master);
+    voice.start(now);
+    voice.stop(now + duration);
+  }
+
+  noise.start(now);
+  noise.stop(now + duration);
+  window.setTimeout(() => {
+    if (activeAudioContext === context) activeAudioContext = null;
+    context.close();
+  }, duration * 1000 + 80);
+}
+
+function playLetterSound(letter, cancelCurrent = true) {
+  if (cancelCurrent) stopSound();
+  if (letter === "S" || letter === "V") {
+    playFricative(letter);
+    return;
+  }
+  const voice = new SpeechSynthesisUtterance(soundText[letter] || letter);
+  voice.rate = 0.76;
+  voice.pitch = 1.08;
+  const voices = window.speechSynthesis.getVoices();
+  voice.voice =
+    voices.find((item) => item.lang.startsWith("en") && /Samantha|Ava|Aria|Google US English/i.test(item.name)) ||
+    voices.find((item) => item.lang.startsWith("en-US")) ||
+    voices.find((item) => item.lang.startsWith("en")) ||
+    null;
+  window.speechSynthesis.speak(voice);
+}
+
+function playSoundSequence(letters, word) {
+  stopSound();
+  const run = soundRun;
+  letters.forEach((letter, index) => {
+    window.setTimeout(() => {
+      if (soundRun !== run) return;
+      window.speechSynthesis.cancel();
+      activeAudioContext?.close();
+      activeAudioContext = null;
+      playLetterSound(letter, false);
+    }, index * 720);
+  });
+  window.setTimeout(() => {
+    if (soundRun === run) speak(word, 0.68);
+  }, letters.length * 720);
 }
 
 function letterOrder(round) {
@@ -147,7 +251,11 @@ function chooseLetter(tile) {
   const wanted = targetLetters[placed.length];
   if (tile.letter !== wanted) {
     mistake = tile.id;
-    speak(`${soundText[tile.letter] || tile.letter}. Try another block.`);
+    playLetterSound(tile.letter);
+    const run = soundRun;
+    window.setTimeout(() => {
+      if (soundRun === run) speak("Try another block.");
+    }, 700);
     window.clearTimeout(mistakeTimer);
     mistakeTimer = window.setTimeout(() => {
       mistake = null;
@@ -158,19 +266,18 @@ function chooseLetter(tile) {
   }
 
   placed.push(tile.id);
-  speak(soundText[tile.letter] || tile.letter);
+  playLetterSound(tile.letter);
   if (placed.length === targetLetters.length) {
     celebrating = true;
     stars = Math.min(3, stars + 1);
-    window.setTimeout(() => speak(`${round.label}! You built it!`), 550);
+    window.setTimeout(() => speak(`${round.label}! You built it!`), 720);
   }
   render();
 }
 
 function hearSounds() {
   const round = rounds[roundIndex];
-  const sounds = round.word.replaceAll(" ", "").split("").map((letter) => soundText[letter] || letter).join(" … ");
-  speak(`${sounds} … ${round.label}`, 0.62);
+  playSoundSequence(round.word.replaceAll(" ", "").split(""), round.label);
 }
 
 function nextRound() {
@@ -194,7 +301,7 @@ elements.startButton.addEventListener("click", () => {
 });
 
 elements.homeButton.addEventListener("click", () => {
-  window.speechSynthesis?.cancel();
+  stopSound();
   elements.gameShell.classList.add("is-hidden");
   elements.introScreen.classList.remove("is-hidden");
 });
