@@ -2,7 +2,9 @@ const rounds = [
   { word: "DIGGER", image: "digger.png", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "DUMP TRUCK", image: "dump-truck.png", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
   { word: "DOZER", image: "dozer.png", label: "dozer", colors: ["yellow", "blue", "green", "red", "yellow"] },
+  { word: "LOADER", image: "loader.png", label: "loader", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "TOWER CRANE", emoji: "🏗️", label: "tower crane", colors: ["green", "yellow", "blue", "red", "green", "yellow", "blue", "red", "green", "yellow"] },
+  { word: "TRUCK CRANE", image: "truck-crane.png", label: "truck crane", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red", "yellow"] },
   { word: "MIXER", image: "mixer.png", label: "mixer", colors: ["blue", "red", "yellow", "green", "blue"] },
   { word: "CAT", emoji: "🐱", label: "cat", colors: ["blue", "yellow", "red"] },
   { word: "DOG", emoji: "🐶", label: "dog", colors: ["green", "red", "blue"] },
@@ -15,7 +17,7 @@ const rounds = [
 
 const soundText = {
   A: "ah", B: "buh", C: "kuh", D: "duh", E: "eh", G: "guh", H: "huh",
-  I: "ih", K: "kuh", M: "mmm", N: "nnn", O: "aw", P: "puh", R: "rrr",
+  I: "ih", K: "kuh", L: "lll", M: "mmm", N: "nnn", O: "aw", P: "puh", R: "rrr",
   S: "sss", T: "tuh", U: "uh", V: "vvv", W: "wuh", X: "ks",
 };
 
