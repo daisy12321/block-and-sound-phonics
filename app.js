@@ -1,5 +1,5 @@
 const rounds = [
-  { word: "GRABBER", image: "grabber.png", label: "grabber", colors: ["blue", "yellow", "green", "red", "blue", "yellow", "green"] },
+  { word: "GRABBER DIGGER", image: "grabber.png", label: "grabber digger", colors: ["blue", "yellow", "green", "red", "blue", "yellow", "green", "yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "DIGGER", image: "digger.png", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "DUMP TRUCK", image: "dump-truck.png", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
   { word: "DOZER", image: "dozer.png", label: "dozer", colors: ["yellow", "blue", "green", "red", "yellow"] },
