@@ -261,10 +261,6 @@ function chooseLetter(tile) {
   if (tile.letter !== wanted) {
     mistake = tile.id;
     playLetterSound(tile.letter);
-    const run = soundRun;
-    window.setTimeout(() => {
-      if (soundRun === run) speak("Try another block.");
-    }, 700);
     window.clearTimeout(mistakeTimer);
     mistakeTimer = window.setTimeout(() => {
       mistake = null;
