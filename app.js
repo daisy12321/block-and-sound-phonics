@@ -19,8 +19,29 @@ const rounds = [
 const soundText = {
   A: "ah", B: "buh", C: "kuh", D: "duh", E: "eh", G: "guh", H: "huh",
   I: "ih", K: "kuh", L: "lll", M: "mmm", N: "nnn", O: "aw", P: "puh", R: "rrr",
-  S: "sss", T: "tuh", U: "uh", V: "vvv", W: "wuh", X: "ks",
+  S: "sss", T: "tuh", U: "uh", V: "vvv", W: "wuh", X: "ks", Z: "zzz",
 };
+
+const soundFiles = {
+  A: "a-short", B: "b", C: "c-hard", D: "d", E: "e-short", G: "g-hard", H: "h",
+  I: "i-short", K: "k", L: "l", M: "m", N: "n", O: "o-short", P: "p", R: "r",
+  S: "s", T: "t", U: "u-short", V: "v", W: "w", X: "x", Z: "z",
+};
+
+const roundSoundFiles = {
+  "GRABBER DIGGER": ["g-hard", "r", "a-short", "b", "b", "e-short", "er", "d", "i-short", "g-hard", "g-hard", "e-short", "er"],
+  DIGGER: ["d", "i-short", "g-hard", "g-hard", "e-short", "er"],
+  DOZER: ["d", "o-long", "z", "e-short", "er"],
+  LOADER: ["l", "o-long", "a-short", "d", "e-short", "er"],
+  "TOWER CRANE": ["t", "ow", "w", "e-short", "er", "c-hard", "r", "a-long", "n", "e-short"],
+  "TRUCK CRANE": ["t", "r", "u-short", "c-hard", "k", "c-hard", "r", "a-long", "n", "e-short"],
+  MIXER: ["m", "i-short", "x", "e-short", "er"],
+};
+
+function soundsForRound(round) {
+  const letters = round.word.replaceAll(" ", "").split("");
+  return roundSoundFiles[round.word] || letters.map((letter) => soundFiles[letter] || letter.toLowerCase());
+}
 
 const elements = {
   introScreen: document.querySelector("#intro-screen"),
@@ -68,10 +89,13 @@ function speak(text, rate = 0.72) {
 
 let soundRun = 0;
 let activeAudioContext = null;
+let activeRecordedAudio = null;
 
 function stopSound() {
   soundRun += 1;
   window.speechSynthesis?.cancel();
+  activeRecordedAudio?.pause();
+  activeRecordedAudio = null;
   activeAudioContext?.close();
   activeAudioContext = null;
 }
@@ -129,7 +153,7 @@ function playFricative(letter) {
   }, duration * 1000 + 80);
 }
 
-function playLetterSound(letter, cancelCurrent = true) {
+function playFallbackLetterSound(letter, cancelCurrent = true) {
   if (cancelCurrent) stopSound();
   if (letter === "S" || letter === "V") {
     playFricative(letter);
@@ -147,21 +171,48 @@ function playLetterSound(letter, cancelCurrent = true) {
   window.speechSynthesis.speak(voice);
 }
 
-function playSoundSequence(letters, word) {
+function playLetterSound(letter, soundFile, cancelCurrent = true, onComplete) {
+  if (cancelCurrent) stopSound();
+  const audio = new Audio(`audio/${soundFile}.mp3`);
+  activeRecordedAudio = audio;
+  let settled = false;
+
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+    if (activeRecordedAudio === audio) activeRecordedAudio = null;
+    onComplete?.();
+  };
+  const fallback = () => {
+    if (settled) return;
+    settled = true;
+    if (activeRecordedAudio === audio) activeRecordedAudio = null;
+    playFallbackLetterSound(letter, false);
+    window.setTimeout(() => onComplete?.(), 750);
+  };
+
+  audio.addEventListener("ended", finish, { once: true });
+  audio.addEventListener("error", fallback, { once: true });
+  audio.play().catch(fallback);
+}
+
+function playSoundSequence(letters, sounds, word) {
   stopSound();
   const run = soundRun;
-  letters.forEach((letter, index) => {
-    window.setTimeout(() => {
-      if (soundRun !== run) return;
-      window.speechSynthesis.cancel();
-      activeAudioContext?.close();
-      activeAudioContext = null;
-      playLetterSound(letter, false);
-    }, index * 720);
-  });
-  window.setTimeout(() => {
-    if (soundRun === run) speak(word, 0.68);
-  }, letters.length * 720);
+  let index = 0;
+  const playNext = () => {
+    if (soundRun !== run) return;
+    if (index >= letters.length) {
+      speak(word, 0.68);
+      return;
+    }
+    const current = index;
+    index += 1;
+    playLetterSound(letters[current], sounds[current], false, () => {
+      window.setTimeout(playNext, 100);
+    });
+  };
+  playNext();
 }
 
 function shuffleLetters(round) {
@@ -256,11 +307,12 @@ function render() {
 function chooseLetter(tile) {
   const round = rounds[roundIndex];
   const targetLetters = round.word.replaceAll(" ", "").split("");
+  const targetSounds = soundsForRound(round);
   if (celebrating || placed.includes(tile.id) || placed.length === targetLetters.length) return;
   const wanted = targetLetters[placed.length];
   if (tile.letter !== wanted) {
     mistake = tile.id;
-    playLetterSound(tile.letter);
+    playLetterSound(tile.letter, targetSounds[tile.id]);
     window.clearTimeout(mistakeTimer);
     mistakeTimer = window.setTimeout(() => {
       mistake = null;
@@ -271,18 +323,23 @@ function chooseLetter(tile) {
   }
 
   placed.push(tile.id);
-  playLetterSound(tile.letter);
-  if (placed.length === targetLetters.length) {
+  const finished = placed.length === targetLetters.length;
+  playLetterSound(
+    tile.letter,
+    targetSounds[tile.id],
+    true,
+    finished ? () => speak(`${round.label}! You built it!`) : undefined,
+  );
+  if (finished) {
     celebrating = true;
     stars = Math.min(3, stars + 1);
-    window.setTimeout(() => speak(`${round.label}! You built it!`), 720);
   }
   render();
 }
 
 function hearSounds() {
   const round = rounds[roundIndex];
-  playSoundSequence(round.word.replaceAll(" ", "").split(""), round.label);
+  playSoundSequence(round.word.replaceAll(" ", "").split(""), soundsForRound(round), round.label);
 }
 
 function changeRound(direction) {
