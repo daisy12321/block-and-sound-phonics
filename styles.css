@@ -420,3 +420,38 @@ button.brand:focus-visible { outline: 4px solid var(--blue); outline-offset: 6px
   display: block;
   object-fit: cover;
 }
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.word-nav-button {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border: 3px solid white;
+  border-radius: 50%;
+  color: white;
+  background: var(--red);
+  box-shadow: 0 6px 0 var(--red-dark);
+  cursor: pointer;
+  font-size: 27px;
+  font-weight: 900;
+  transition: transform .18s ease;
+}
+
+.word-nav-button:hover { transform: translateY(-3px); }
+.word-nav-button:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--red-dark); }
+.word-nav-button:focus-visible { outline: 5px solid var(--ink); outline-offset: 4px; }
+
+@media (max-width: 560px) {
+  .control-row { gap: 7px; width: 100%; }
+  .control-row .sound-button,
+  .control-row .next-button { min-width: 180px; padding-inline: 14px; }
+  .word-nav-button { width: 43px; height: 43px; flex-basis: 43px; border-width: 2px; font-size: 22px; box-shadow: 0 4px 0 var(--red-dark); }
+  .game-card.is-long-word .control-row .sound-button,
+  .game-card.is-long-word .control-row .next-button { min-width: 168px; }
+}

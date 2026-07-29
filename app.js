@@ -38,6 +38,8 @@ const elements = {
   blocks: document.querySelector("#blocks"),
   actionButton: document.querySelector("#action-button"),
   actionLabel: document.querySelector("#action-label"),
+  previousWord: document.querySelector("#previous-word"),
+  nextWord: document.querySelector("#next-word"),
   hint: document.querySelector("#hint"),
 };
 
@@ -47,6 +49,7 @@ let stars = 0;
 let celebrating = false;
 let mistake = null;
 let mistakeTimer;
+let letterTiles = [];
 
 function speak(text, rate = 0.72) {
   if (!("speechSynthesis" in window)) return;
@@ -161,11 +164,16 @@ function playSoundSequence(letters, word) {
   }, letters.length * 720);
 }
 
-function letterOrder(round) {
+function shuffleLetters(round) {
   const values = round.word.replaceAll(" ", "").split("").map((letter, id) => ({ letter, id, color: round.colors[id] }));
-  const offset = (roundIndex * 2 + 1) % values.length;
-  const rotated = [...values.slice(offset), ...values.slice(0, offset)];
-  return roundIndex % 2 ? rotated.reverse() : rotated;
+  for (let index = values.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [values[index], values[swapIndex]] = [values[swapIndex], values[index]];
+  }
+  if (values.length > 1 && values.every((tile, index) => tile.id === index)) {
+    [values[0], values[1]] = [values[1], values[0]];
+  }
+  return values;
 }
 
 function render() {
@@ -224,7 +232,7 @@ function render() {
   });
 
   elements.blocks.replaceChildren();
-  letterOrder(round).forEach((tile) => {
+  letterTiles.forEach((tile) => {
     const button = document.createElement("button");
     const used = placed.includes(tile.id);
     button.type = "button";
@@ -281,19 +289,28 @@ function hearSounds() {
   playSoundSequence(round.word.replaceAll(" ", "").split(""), round.label);
 }
 
-function nextRound() {
+function changeRound(direction) {
+  stopSound();
   placed = [];
   celebrating = false;
   mistake = null;
-  roundIndex = (roundIndex + 1) % rounds.length;
+  roundIndex = (roundIndex + direction + rounds.length) % rounds.length;
+  letterTiles = shuffleLetters(rounds[roundIndex]);
   render();
   window.setTimeout(() => speak(`Find the sounds in ${rounds[roundIndex].label}`), 250);
+}
+
+function nextRound() {
+  changeRound(1);
 }
 
 elements.actionButton.addEventListener("click", () => {
   if (celebrating) nextRound();
   else hearSounds();
 });
+
+elements.previousWord.addEventListener("click", () => changeRound(-1));
+elements.nextWord.addEventListener("click", nextRound);
 
 elements.startButton.addEventListener("click", () => {
   elements.introScreen.classList.add("is-hidden");
@@ -307,4 +324,5 @@ elements.homeButton.addEventListener("click", () => {
   elements.introScreen.classList.remove("is-hidden");
 });
 
+letterTiles = shuffleLetters(rounds[roundIndex]);
 render();

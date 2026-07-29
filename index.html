@@ -65,10 +65,14 @@
           <p class="instruction">Tap the letter blocks in the right order.</p>
           <div class="sockets" id="sockets" aria-label="Word building spaces"></div>
           <div class="blocks" id="blocks" aria-label="Letter blocks"></div>
-          <button class="sound-button" id="action-button" type="button">
-            <span class="speaker" aria-hidden="true">♪</span>
-            <span id="action-label">Hear the sounds</span>
-          </button>
+          <div class="control-row" aria-label="Word controls">
+            <button class="word-nav-button" id="previous-word" type="button" aria-label="Previous word">←</button>
+            <button class="sound-button" id="action-button" type="button">
+              <span class="speaker" aria-hidden="true">♪</span>
+              <span id="action-label">Hear the sounds</span>
+            </button>
+            <button class="word-nav-button" id="next-word" type="button" aria-label="Next word">→</button>
+          </div>
           <p class="hint" id="hint" aria-live="polite">Listen. Tap. Build!</p>
         </div>
       </section>
