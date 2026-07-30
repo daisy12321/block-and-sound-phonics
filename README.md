@@ -4,6 +4,9 @@ This repository contains a framework-free static version of the Block & Sound
 phonics game. GitHub Pages can publish it directly; no build command, database,
 or API key is required.
 
+The recorded phonics files and their processing notes are documented in
+[`audio/README.md`](audio/README.md).
+
 ## Upload through the GitHub website
 
 1. On GitHub, create a new **public** repository named
