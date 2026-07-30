@@ -45,7 +45,21 @@ included in this website package.
 
 ## Usage
 
-The game selects these files in `app.js`. Keep the filenames unchanged when
+The game code selects these files by name. Keep the filenames unchanged when
 uploading or hosting the site.
 
-No separate license for reuse of these recordings is granted by this file.
+## License
+
+Copyright © 2026 the recording owner. All rights reserved.
+
+These recordings are included only for use within the Block & Sound game. No
+license is granted to extract, copy, redistribute, modify, sell, sublicense,
+publish separately, use in another product or dataset, or use for AI or
+machine-learning training.
+
+Any use outside the Block & Sound game requires prior written permission from
+the recording owner. Hosting the game does not transfer ownership of the
+recordings or grant additional reuse rights.
+
+This notice applies only to the audio recordings. The game’s source code,
+artwork, and other assets may have separate terms.
