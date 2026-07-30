@@ -1,4 +1,5 @@
 const rounds = [
+  { word: "BUCKET WHEEL DIGGER", image: "bucket-wheel-digger.png", label: "bucket wheel digger", colors: ["blue", "yellow", "green", "red", "blue", "yellow", "green", "red", "yellow", "blue", "green", "red", "blue", "yellow", "green", "red", "blue"] },
   { word: "GRABBER DIGGER", image: "grabber.png", label: "grabber digger", colors: ["blue", "yellow", "green", "red", "blue", "yellow", "green", "yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "DIGGER", image: "digger.png", label: "digger", colors: ["yellow", "blue", "green", "red", "yellow", "blue"] },
   { word: "DUMP TRUCK", image: "dump-truck.png", label: "dump truck", colors: ["red", "yellow", "green", "blue", "red", "yellow", "green", "blue", "red"] },
@@ -29,6 +30,7 @@ const soundFiles = {
 };
 
 const roundSoundFiles = {
+  "BUCKET WHEEL DIGGER": ["b", "u-short", "c-hard", "k", "e-short", "t", "w", "h", "e-short", "e-short", "l", "d", "i-short", "g-hard", "g-hard", "e-short", "er"],
   "GRABBER DIGGER": ["g-hard", "r", "a-short", "b", "b", "e-short", "er", "d", "i-short", "g-hard", "g-hard", "e-short", "er"],
   DIGGER: ["d", "i-short", "g-hard", "g-hard", "e-short", "er"],
   DOZER: ["d", "o-long", "z", "e-short", "er"],
@@ -232,6 +234,7 @@ function render() {
   const targetLetters = round.word.replaceAll(" ", "").split("");
   elements.gameCard.classList.toggle("is-celebrating", celebrating);
   elements.gameCard.classList.toggle("is-long-word", targetLetters.length > 3);
+  elements.gameCard.classList.toggle("is-extra-long", targetLetters.length > 13);
   elements.pictureBubble.setAttribute("aria-label", `A ${round.label}`);
   elements.emoji.replaceChildren();
   if (round.image) {
